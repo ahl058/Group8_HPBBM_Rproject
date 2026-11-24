@@ -1,0 +1,75 @@
+#cargar librerias 
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(forcats)  # para poder ordenar los niveles del genotipo 
+library(patchwork)
+
+#generar dataframe de los datos 
+datos <- data.frame(Alex_2026_09_14cDNAH9WT_para_qPCR_ROmacromicro_Quantification_Cq_Results)
+
+# Hacemos el promedio del HMBS para normalizar
+
+prom_HMBS <- datos %>%                      # hacemos un nuevo dataframe a partir del d.f. datos.
+  filter(GEN=="HMBS")%>%                    # Lo filtramos para que sólo coja el gen HMBS
+  group_by(ESTADIO, MUESTRA) %>%            # Los agrupamos primero por estadío y luego por muestra
+  summarise(media_HMBS=mean(Cq))            # Summarise es para que haga la media de los Cq agrupado por ESTADIO y MUESTRA y no haga la media de todos.
+
+datos_mediaHMBS <- datos %>%                # Hacemos un nuevo data frame en el que incluimos el dataframe "datos" y a este le añadimo "mediaHMBS"
+  left_join(prom_HMBS %>% select(ESTADIO, MUESTRA, media_HMBS), 
+            by = c("ESTADIO", "MUESTRA"))
+datos_mediaHMBS
+
+datos_norm <- datos_mediaHMBS %>%           # Utilizamos mutate para incluir una columna, la cual se va a llamar NORMALIZACION y los valores van a ser los que están a la derecha del =
+  mutate(NORMALIZED = 2^-(datos_mediaHMBS$Cq-datos_mediaHMBS$media_HMBS))  # En este caso el mutate también añade una columna a datos media, haciendo el nuevo dataset datos_norm, y añade los datos normalizados.
+
+
+prom_CONTROL <- datos_norm %>%
+  filter(TIPO=="IPS")%>%
+  group_by(GEN)%>%
+  summarise(media_CONTROL = mean(NORMALIZED, na.rm=TRUE))
+prom_CONTROL
+  
+datos_relativos <- datos_norm %>%
+  left_join(prom_CONTROL %>% select(GEN, media_CONTROL), 
+            by = c("GEN")) 
+datos_relativos
+
+#datos_relativos_2 <- normalizacion %>%
+  #mutate(media_control=promedio_CONTROL$media_CONTROL [match(normalizacion$GEN, promedio_CONTROL$GEN)])
+
+datos_def <- datos_relativos %>%
+  mutate(relativos = datos_relativos$NORMALIZED/datos_relativos$media_CONTROL)
+datos_def
+
+datos_def <- datos_def %>%
+  filter(GEN!="HMBS", ESTADIO!="Cell")
+
+datos_def <- datos_def %>%
+  mutate(log10 = log10(datos_def$relativos))
+datos_def
+
+datos_media <- datos_def %>%
+  group_by(ESTADIO,GENOTIPO,GEN)%>%
+  summarise(media_log10 = mean(log10, na.rm=TRUE))
+datos_media
+
+datos_def_D50 <- datos_def %>%
+  filter(ESTADIO=="D50")
+
+datos_def_D25 <- datos_def %>%
+  filter(ESTADIO=="D25")
+
+datos_media_D50 <- datos_media %>%
+  filter(ESTADIO=="D50")
+
+datos_media_D25 <- datos_media %>%
+  filter(ESTADIO=="D25")
+
+ggplot()+
+  geom_col(data = datos_media_D25, 
+           aes(x=GEN, y=media_log10,  fill=GENOTIPO, alpha = 0.5), 
+           position = "dodge")+
+  geom_jitter(data=datos_def_D25, 
+              aes(x=GEN, y=log10,  color=GENOTIPO),
+              position= position_jitterdodge(jitter.width = 0.5))

@@ -1,0 +1,4 @@
+Los archivos son 4 réplicas de datos de crecimiento (OD600) a diferentes tiempos para diferentes cepas. 
+Esto también es lo mismo para un inductor de arabinosa (en los datos pone que hay 7 réplicas, pendiente de validar por Modesto). 
+
+De momento lo que está hecho es el trabajo de reordenar los data frames y juntarlos, junto con hacer la media y la desviación estándar de los datos. 
