@@ -36,7 +36,7 @@ replicate_Ara4<-read.table("data/growth_curves_Ara4.txt", header=TRUE,sep="\t")%
   rename(OD600_A4=OD600)
 
       #(After checking in the console no error was found, only missing values in some cells, which has 
-      #to be taken in account when doing operations beyond)
+      #to be taken in account when doing operations beyond
 
 
 # We'll use the function full_join() that joins the columns matching by 'Cepa' and 'Tiempo'. 
