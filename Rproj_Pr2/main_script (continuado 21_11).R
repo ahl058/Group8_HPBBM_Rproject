@@ -8,9 +8,7 @@ adip_data$weeks <- as.factor(adip_data$weeks)
 adip_data$image <- as.factor(adip_data$image)
 
 
-# Task 1. We've created a new data frame which is much easier to work with because it just have the
-# m.id, which has in it the treatment and the week (so we don't have to work with those variables separately).
-# it also has the nº of mouse, the nº of image for each mouse and values obtained in each image. 
+ 
 adip_clean<- data.frame('m.id'=adip_data$m.id,'mouse'=adip_data$mouse,'image'=adip_data$image,'pixel2'=adip_data$pixel2)
 levels(adip_clean$m.id)[levels(adip_clean$m.id) == 'HFD.0'] <- 'HFD.7' # Esto es para cambiar la variable que está mal.
 levels(adip_clean$m.id) <- sort(levels(adip_clean$m.id)) # Esto es para ordenarlo una vez lo hemos cambiado. 
