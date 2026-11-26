@@ -7,42 +7,34 @@ library(RColorBrewer)
 
 # We'll upload the replicates for the data and rename 0D600 column to distinguish between replicates.
 
-replicate_1 <- read.table('Problem4_GrowthCurves/growth_curves_1.txt', sep='\t', header = TRUE) %>%
+replicate_1 <- read.table('data/growth_curves_1.txt', sep='\t', header = TRUE) %>%
   rename(OD600_1 = OD600)
-replicate_2 <- read.table('Problem4_GrowthCurves/growth_curves_2.txt', sep='\t', header = TRUE) %>%
+replicate_2 <- read.table('data/growth_curves_2.txt', sep='\t', header = TRUE) %>%
   rename(OD600_2 = OD600)
-replicate_3 <- read.table('Problem4_GrowthCurves/growth_curves_3.txt', sep='\t', header = TRUE)%>%
+replicate_3 <- read.table('data/growth_curves_3.txt', sep='\t', header = TRUE)%>%
   rename(OD600_3 = OD600)
 replicate_3$Cepa[24] <- 'ΔpiPolB' # It is necessary to change this value because it is incorrect in the data. 
 replicate_3 <- replicate_3 %>%
   arrange(Cepa == 'ΔpiPolB+piPolB') # The function arrange with a boolean will make the true conditions to locate at the end. 
 
-replicate_4 <- read.table('Problem4_GrowthCurves/growth_curves_4.txt', sep='\t', header = TRUE)%>%
+replicate_4 <- read.table('data/growth_curves_4.txt', sep='\t', header = TRUE)%>%
   rename(OD600_4 = OD600)
       #(Errors found while analyzing data already solved)
 
 #Same but for Arabinose replicates files
 
-replicate_Ara1<-read.table("Problem4_GrowthCurves/growth_curves_Ara1.txt",header=TRUE,sep="\t")%>%
+replicate_Ara1<-read.table("data/growth_curves_Ara1.txt",header=TRUE,sep="\t")%>%
   rename(OD600_A1=OD600)
 
-replicate_Ara2<-read.table("Problem4_GrowthCurves/growth_curves_Ara2.txt", header=TRUE,sep="\t")%>%
+replicate_Ara2<-read.table("data/growth_curves_Ara2.txt", header=TRUE,sep="\t")%>%
   rename(OD600_A2=OD600)
 
-replicate_Ara3<-read.table("Problem4_GrowthCurves/growth_curves_Ara3.txt", header=TRUE,sep="\t")%>%
+replicate_Ara3<-read.table("data/growth_curves_Ara3.txt", header=TRUE,sep="\t")%>%
   rename(OD600_A3=OD600)
 
-replicate_Ara4<-read.table("Problem4_GrowthCurves/growth_curves_Ara4.txt", header=TRUE,sep="\t")%>%
+replicate_Ara4<-read.table("data/growth_curves_Ara4.txt", header=TRUE,sep="\t")%>%
   rename(OD600_A4=OD600)
 
-replicate_Ara5<-read.table("Problem4_GrowthCurves/growth_curves_Ara5.txt", header=TRUE,sep="\t")%>%
-  rename(OD600_A5=OD600)
-
-replicate_Ara6<-read.table("Problem4_GrowthCurves/growth_curves_Ara6.txt", header=TRUE,sep="\t")%>%
-  rename(OD600_A6=OD600)
-
-replicate_Ara7<-read.table("Problem4_GrowthCurves/growth_curves_Ara7.txt", header=TRUE,sep="\t")%>%
-  rename(OD600_A7=OD600)
       #(After checking in the console no error was found, only missing values in some cells, which has 
       #to be taken in account when doing operations beyond)
 
@@ -58,6 +50,7 @@ gr_curves <- replicate_1 %>%
 #First we define the order we want by turning the column cepa into factors and then establishing the levels
 gr_curves$Cepa<-factor(gr_curves$Cepa,
                         levels=c("WT", "ΔpiPolB","ΔpiPolB+piPolB"))
+
 gr_curves<-gr_curves %>%
   arrange(Cepa, Tiempo) %>%
   #Now we have all rows ordered
